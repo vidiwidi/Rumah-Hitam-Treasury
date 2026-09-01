@@ -1,83 +1,810 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pos Keuangan Keluarga</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- Chart.js CDN untuk Grafik -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumah Hitam Finance</title>
+    <!-- Google Fonts: Plus Jakarta Sans & Playfair Display -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-main: #FAF7F5;
+            --surface-card: #FFFFFF;
+            --primary-rose: #C88EA7;
+            --primary-hover: #B57792;
+            --soft-blush: #F7EBEF;
+            --dusty-mauve: #8E7A8A;
+            --cream-accent: #FDF9F3;
+            --spending-tag-bg: #FBEBE8;
+            --spending-tag-color: #A85444;
+            --saving-tag-bg: #EAF3EC;
+            --saving-tag-color: #3B7A57;
+            --text-dark: #2D272A;
+            --text-muted: #7A7277;
+            --border-soft: #EFE8E6;
+            --shadow-subtle: 0 10px 30px rgba(168, 142, 154, 0.08);
+            --shadow-hover: 0 15px 35px rgba(168, 142, 154, 0.12);
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            padding: 40px 20px;
+            line-height: 1.5;
+        }
+
+        .page-wrapper {
+            max-width: 1040px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* ---------------- SECTION 1: Header ---------------- */
+        .hero-section {
+            background: linear-gradient(135deg, #FFFFFF 0%, #FDF6F8 100%);
+            border: 1px solid var(--border-soft);
+            padding: 40px 32px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-subtle);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(200,142,167,0.15) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+        }
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        .hero-subtitle {
+            font-size: 0.98rem;
+            color: var(--text-muted);
+            max-width: 620px;
+            margin: 0 auto 20px auto;
+            font-weight: 400;
+        }
+        .hero-author {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--soft-blush);
+            border: 1px solid rgba(200, 142, 167, 0.2);
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            color: var(--primary-rose);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        /* ---------------- Key Metrics Overview Bar ---------------- */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .metric-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border-soft);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-subtle);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+        .metric-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .metric-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .metric-value.highlight {
+            color: var(--primary-rose);
+        }
+
+        /* ---------------- General Section Cards ---------------- */
+        .section-card {
+            background: var(--surface-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-subtle);
+            padding: 32px;
+        }
+        .section-header {
+            border-bottom: 1px solid var(--border-soft);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--text-dark);
+        }
+
+        /* ---------------- SECTION 2: Architecture Grid ---------------- */
+        .architecture-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        .arch-card {
+            background: var(--cream-accent);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-md);
+            padding: 24px;
+        }
+        .arch-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--border-soft);
+        }
+        .arch-card.istri h3 {
+            color: var(--primary-rose);
+        }
+        .pocket-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .pocket-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface-card);
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-soft);
+            font-size: 0.88rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        .pocket-tag {
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .tag-spending { background: var(--spending-tag-bg); color: var(--spending-tag-color); }
+        .tag-saving { background: var(--saving-tag-bg); color: var(--saving-tag-color); }
+
+        /* ---------------- SECTION 3: Form Controls ---------------- */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        input, select {
+            padding: 12px 14px;
+            border: 1px solid var(--border-soft);
+            background-color: var(--bg-main);
+            border-radius: var(--radius-sm);
+            font-size: 0.92rem;
+            color: var(--text-dark);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        input:focus, select:focus {
+            border-color: var(--primary-rose);
+            background-color: #FFFFFF;
+            box-shadow: 0 0 0 3px rgba(200, 142, 167, 0.15);
+        }
+        .btn-submit {
+            grid-column: span 2;
+            padding: 14px;
+            background-color: var(--primary-rose);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            margin-top: 8px;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 4px 12px rgba(200, 142, 167, 0.25);
+        }
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* ---------------- Charts Section ---------------- */
+        .bar-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .bar-chart-card {
+            background: var(--cream-accent);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+        .bar-wrapper {
+            position: relative;
+            width: 100%;
+            height: 320px;
+        }
+        .legend-info {
+            display: flex;
+            gap: 18px;
+            font-size: 0.82rem;
+            margin-top: 16px;
+            justify-content: flex-end;
+            color: var(--text-muted);
+        }
+        .legend-box {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        .chart-card {
+            background: var(--cream-accent);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .chart-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .chart-header h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: var(--text-dark);
+        }
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 260px;
+            height: 260px;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            body { padding: 20px 12px; }
+            .architecture-grid, .form-grid, .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .btn-submit { grid-column: span 1; }
+            .hero-title { font-size: 2rem; }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Pos Keuangan Keluarga</h1>
-    </header>
 
-    <!-- Ringkasan Saldo -->
-    <section class="summary-cards">
-      <div class="card income">
-        <h3>Pemasukan</h3>
-        <p id="total-income">Rp 0</p>
-      </div>
-      <div class="card expense">
-        <h3>Pengeluaran</h3>
-        <p id="total-expense">Rp 0</p>
-      </div>
-      <div class="card balance">
-        <h3>Sisa Saldo</h3>
-        <p id="total-balance">Rp 0</p>
-      </div>
-    </section>
+    <div class="page-wrapper">
 
-    <!-- Form Input Transaksi -->
-    <section class="form-section">
-      <h2>Tambah Transaksi Baru</h2>
-      <form id="transaction-form">
-        <input type="text" id="title" placeholder="Keterangan (misal: Belanja)" required>
-        <input type="number" id="amount" placeholder="Jumlah (Rp)" required>
-        <select id="type">
-          <option value="expense">Pengeluaran</option>
-          <option value="income">Pemasukan</option>
-        </select>
-        <select id="category">
-          <option value="Dapur">Dapur & Makan</option>
-          <option value="Tagihan">Tagihan & Listrik</option>
-          <option value="Pendidikan">Pendidikan Anak</option>
-          <option value="Tabungan">Tabungan & Investasi</option>
-          <option value="Lainnya">Lain-lain</option>
-        </select>
-        <button type="submit">Simpan Transaksi</button>
-      </form>
-    </section>
+        <!-- SECTION 1: Polished Header -->
+        <header class="hero-section">
+            <h1 class="hero-title">Rumah Hitam Finance</h1>
+            <p class="hero-subtitle">
+                Our Family Financial Dashboard — Fleksibel Pocket Structure, Basic Spending & Savings, Real-Time Exceeded Alerts.
+            </p>
+            <div class="hero-author">✦ curated by Bibu Vidi</div>
+        </header>
 
-    <!-- Visualisasi & Tabel -->
-    <section class="dashboard-grid">
-      <div class="chart-container">
-        <h2>Sebaran Pengeluaran</h2>
-        <canvas id="expenseChart"></canvas>
-      </div>
+        <!-- Dynamic Overview Cards -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Total Net Savings</div>
+                <div class="metric-value highlight">Rp 28.300.000</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Monthly Budget (Avg)</div>
+                <div class="metric-value">Rp 9.500.000</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Monthly Expenses</div>
+                <div class="metric-value">Rp 8.700.000</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Savings Rate</div>
+                <div class="metric-value highlight">34%</div>
+            </div>
+        </div>
 
-      <div class="table-container">
-        <h2>Riwayat Transaksi</h2>
-        <table id="transaction-table">
-          <thead>
-            <tr>
-              <th>Keterangan</th>
-              <th>Kategori</th>
-              <th>Tipe</th>
-              <th>Jumlah</th>
-            </tr>
-          </thead>
-          <tbody id="transaction-list">
-            <!-- Data dari JS akan muncul di sini -->
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </div>
+        <!-- SECTION 2: Arsitektur Keuangan Rumah Hitam -->
+        <section class="section-card">
+            <div class="section-header">
+                <h2 class="section-title">Arsitektur Keuangan Rumah Hitam</h2>
+            </div>
+            
+            <div class="architecture-grid">
+                <!-- Basic Spending Pocket -->
+                <div class="arch-card">
+                    <h3>Basic Spending</h3>
+                    <ul class="pocket-list">
+                        <li class="pocket-item"><span>1. Galon, Gas, Sabun</span> <span class="pocket-tag tag-spending">Spending</span></li>
+                        <li class="pocket-item"><span>2. Belanja Rumah</span> <span class="pocket-tag tag-spending">Spending</span></li>
+                        <li class="pocket-item"><span>3. Hiburan</span> <span class="pocket-tag tag-spending">Spending</span></li>
+                        <li class="pocket-item"><span>4. Kebutuhan Anak</span> <span class="pocket-tag tag-spending">Spending</span></li>
+                        <li class="pocket-item"><span>5. Belanja dan Makan</span> <span class="pocket-tag tag-spending">Spending</span></li>
+                        <li class="pocket-item"><span>6. Gas dan Parkir</span> <span class="pocket-tag tag-spending">Spending</span></li>
+                        <li class="pocket-item"><span>7. Skincare dan Treatment</span> <span class="pocket-tag tag-spending">Spending</span></li>
+                        <li class="pocket-item"><span>8. Beras Sedekah</span> <span class="pocket-tag tag-spending">Spending</span></li>
+                    </ul>
+                </div>
 
-  <!-- Firebase SDK (Modular Version 10+) -->
-  <script type="module" src="app.js"></script>
+                <!-- Basic Savings Pocket -->
+                <div class="arch-card istri">
+                    <h3>Basic Savings</h3>
+                    <ul class="pocket-list">
+                        <li class="pocket-item"><span>1. Tabungan Bibu</span> <span class="pocket-tag tag-saving">Savings</span></li>
+                        <li class="pocket-item"><span>2. Tabungan Anak</span> <span class="pocket-tag tag-saving">Savings</span></li>
+                        <li class="pocket-item"><span>3. Perawatan</span> <span class="pocket-tag tag-saving">Savings</span></li>
+                        <li class="pocket-item"><span>4. Tabungan Liburan Bibu</span> <span class="pocket-tag tag-saving">Savings</span></li>
+                        <li class="pocket-item"><span>5. Tabungan ART</span> <span class="pocket-tag tag-saving">Savings</span></li>
+                        <li class="pocket-item"><span>6. Tabungan Rumah</span> <span class="pocket-tag tag-saving">Savings</span></li>
+                        <li class="pocket-item"><span>7. Tabungan Liburan Keluarga</span> <span class="pocket-tag tag-saving">Savings</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Form Input Transaksi & Visualisasi Grafik -->
+        <section class="section-card">
+            <div class="section-header">
+                <h2 class="section-title">Input Transaksi & Pocket Bulanan</h2>
+            </div>
+
+            <!-- Form Input Transaksi -->
+            <form class="form-grid" onsubmit="event.preventDefault();">
+                <div class="form-group">
+                    <label for="entitas">Entitas Keuangan</label>
+                    <select id="entitas">
+                        <option value="rumah">Rumah</option>
+                        <option value="istri">Istri</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tipeTransaksi">Jenis Transaksi</label>
+                    <select id="tipeTransaksi">
+                        <option value="budget">Budget Bulanan (Penentuan 1 Bulan Ke Depan)</option>
+                        <option value="spending">Spending (Pengeluaran Transaksi)</option>
+                        <option value="saving">Saving (Tabungan)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="pocket">Nama Pocket / Pos Keuangan</label>
+                    <select id="pocket">
+                        <!-- Basic Spending Options -->
+                        <optgroup label="Basic Spending">
+                            <option value="galon_gas_sabun">Galon, Gas, Sabun</option>
+                            <option value="belanja_rumah">Belanja Rumah</option>
+                            <option value="hiburan">Hiburan</option>
+                            <option value="kebutuhan_anak">Kebutuhan Anak</option>
+                            <option value="belanja_makan">Belanja dan Makan</option>
+                            <option value="bensin_parkir">Gas dan Parkir</option>
+                            <option value="skincare_treatment">Skincare dan Treatment</option>
+                            <option value="beras_sedekah">Beras Sedekah</option>
+                        </optgroup>
+                        <!-- Basic Savings Options -->
+                        <optgroup label="Basic Savings">
+                            <option value="tabungan_bibu">Tabungan Bibu</option>
+                            <option value="tabungan_anak">Tabungan Anak</option>
+                            <option value="perawatan">Perawatan</option>
+                            <option value="tabungan_liburan_bibu">Tabungan Liburan Bibu</option>
+                            <option value="tabungan_art">Tabungan ART</option>
+                            <option value="tabungan_rumah">Tabungan Rumah</option>
+                            <option value="tabungan_liburan_keluarga">Tabungan Liburan Keluarga</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="nominal">Jumlah Nominal (Rp)</label>
+                    <input type="number" id="nominal" placeholder="Contoh: 1500000" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="tanggal">Tanggal / Periode</label>
+                    <input type="date" id="tanggal">
+                </div>
+
+                <div class="form-group">
+                    <label for="catatan">Keterangan / Rincian</label>
+                    <input type="text" id="catatan" placeholder="Catatan alokasi atau item pengeluaran">
+                </div>
+
+                <button type="submit" class="btn-submit">Simpan Transaksi</button>
+            </form>
+
+            <!-- BAR CHART SECTION: Evaluasi Bulanan & Exceeded Alert -->
+            <div style="margin-top: 40px;" class="section-header">
+                <h2 class="section-title">Evaluasi Bulanan & Status Budget</h2>
+                <div class="bar-filters">
+                    <select id="filterTahun" onchange="updateBarChart()">
+                        <option value="2026">Tahun 2026</option>
+                        <option value="2025">Tahun 2025</option>
+                    </select>
+                    <select id="filterEntitasBar" onchange="updateBarChart()">
+                        <option value="rumah">Rumah</option>
+                        <option value="istri">Istri</option>
+                    </select>
+                    <select id="filterKategoriBar" onchange="updateBarChart()">
+                        <option value="spending">Spending</option>
+                        <option value="saving">Saving</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bar-chart-card">
+                <div class="bar-wrapper">
+                    <canvas id="chartBarMonthly"></canvas>
+                </div>
+                <div class="legend-info">
+                    <span><span class="legend-box" style="background: #C88EA7;"></span> Sesuai Budget</span>
+                    <span><span class="legend-box" style="background: #E57373;"></span> Exceeded Budget</span>
+                    <span><span class="legend-box" style="background: #D5C8D0;"></span> Limit Target</span>
+                </div>
+            </div>
+
+            <!-- PIE CHART SECTION: Breakdown Visualisasi -->
+            <div class="section-header">
+                <h2 class="section-title">Visualisasi Alokasi Keuangan</h2>
+            </div>
+
+            <div class="charts-grid">
+                <!-- Pie Chart 1: Rumah -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h4>Rumah</h4>
+                        <select id="filterRumah" onchange="updateRumahChart()">
+                            <option value="spending">Spending</option>
+                            <option value="saving">Saving</option>
+                        </select>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="chartRumah"></canvas>
+                    </div>
+                </div>
+
+                <!-- Pie Chart 2: Istri -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h4>Istri</h4>
+                        <select id="filterIstri" onchange="updateIstriChart()">
+                            <option value="spending">Spending</option>
+                            <option value="saving">Saving</option>
+                        </select>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="chartIstri"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- JavaScript Logika Render & Filter Chart.js (Intact Logic) -->
+    <script>
+        // Data Pie Chart
+        const dataRumah = {
+            spending: {
+                labels: ['Galon, Gas, Sabun', 'Belanja Rumah', 'Kebutuhan Anak', 'Gas dan Parkir', 'Beras Sedekah'],
+                datasets: [500000, 2500000, 2000000, 600000, 300000],
+                colors: ['#C88EA7', '#E8B4B8', '#A2B9A9', '#E6C594', '#93B5C6']
+            },
+            saving: {
+                labels: ['Tabungan Rumah', 'Tabungan Liburan Keluarga', 'Tabungan ART'],
+                datasets: [3000000, 1500000, 1000000],
+                colors: ['#8E7A8A', '#A2B9A9', '#E6C594']
+            }
+        };
+
+        const dataIstri = {
+            spending: {
+                labels: ['Hiburan', 'Belanja dan Makan', 'Skincare dan Treatment'],
+                datasets: [1000000, 1500000, 1200000],
+                colors: ['#D09EAF', '#93B5C6', '#E57373']
+            },
+            saving: {
+                labels: ['Tabungan Bibu', 'Tabungan Anak', 'Perawatan', 'Tabungan Liburan Bibu'],
+                datasets: [1500000, 1000000, 800000, 1200000],
+                colors: ['#C88EA7', '#A2B9A9', '#E8B4B8', '#8E7A8A']
+            }
+        };
+
+        // Data Bulanan (Bar Chart) + Target Budget Bulanan
+        const monthlyData = {
+            2026: {
+                rumah: {
+                    spending: {
+                        budget: 6000000,
+                        realisasi: [5500000, 6200000, 5800000, 6500000, 5900000, 7100000, 6000000, 5800000, 6300000, 5700000, 5900000, 6100000]
+                    },
+                    saving: {
+                        budget: 5000000,
+                        realisasi: [5000000, 5000000, 4800000, 5000000, 5200000, 5000000, 5000000, 5000000, 4500000, 5000000, 5000000, 5000000]
+                    }
+                },
+                istri: {
+                    spending: {
+                        budget: 3500000,
+                        realisasi: [3200000, 3800000, 3400000, 3900000, 3500000, 3100000, 3650000, 3400000, 3500000, 3300000, 3700000, 3400000]
+                    },
+                    saving: {
+                        budget: 4000000,
+                        realisasi: [4000000, 4000000, 4000000, 4200000, 4000000, 4000000, 4000000, 3800000, 4000000, 4000000, 4000000, 4000000]
+                    }
+                }
+            },
+            2025: {
+                rumah: {
+                    spending: {
+                        budget: 5500000,
+                        realisasi: [5400000, 5600000, 5300000, 5800000, 5500000, 6000000, 5400000, 5500000, 5700000, 5400000, 5500000, 5900000]
+                    },
+                    saving: {
+                        budget: 4500000,
+                        realisasi: [4500000, 4500000, 4500000, 4500000, 4500000, 4500000, 4500000, 4500000, 4500000, 4500000, 4500000, 4500000]
+                    }
+                },
+                istri: {
+                    spending: {
+                        budget: 3000000,
+                        realisasi: [2900000, 3100000, 3000000, 3200000, 3000000, 2800000, 3050000, 2900000, 3000000, 3100000, 3000000, 3300000]
+                    },
+                    saving: {
+                        budget: 3500000,
+                        realisasi: [3500000, 3500000, 3500000, 3500000, 3500000, 3500000, 3500000, 3500000, 3500000, 3500000, 3500000, 3500000]
+                    }
+                }
+            }
+        };
+
+        const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+        let chartRumahInstance = null;
+        let chartIstriInstance = null;
+        let chartBarInstance = null;
+
+        // Render & Update Bar Chart
+        function updateBarChart() {
+            const tahun = document.getElementById('filterTahun').value;
+            const entitas = document.getElementById('filterEntitasBar').value;
+            const kategori = document.getElementById('filterKategoriBar').value;
+
+            const datasetConfig = monthlyData[tahun][entitas][kategori];
+            const budgetLimit = datasetConfig.budget;
+            const realisasiData = datasetConfig.realisasi;
+
+            // Warna Bar Soft Feminine: Soft Rose (#C88EA7) jika aman, Muted Red (#E57373) jika exceeded
+            const barColors = realisasiData.map(val => val > budgetLimit ? '#E57373' : '#C88EA7');
+
+            const ctx = document.getElementById('chartBarMonthly').getContext('2d');
+
+            if (chartBarInstance) {
+                chartBarInstance.destroy();
+            }
+
+            chartBarInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: monthLabels,
+                    datasets: [
+                        {
+                            label: 'Realisasi Nominal (Rp)',
+                            data: realisasiData,
+                            backgroundColor: barColors,
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Batas Budget Bulanan',
+                            data: Array(12).fill(budgetLimit),
+                            type: 'line',
+                            borderColor: '#D5C8D0',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#2D272A',
+                            padding: 12,
+                            titleFont: { family: 'Plus Jakarta Sans', size: 13 },
+                            bodyFont: { family: 'Plus Jakarta Sans', size: 12 },
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.dataset.type === 'line') {
+                                        return ` Target Budget: Rp ${context.raw.toLocaleString('id-ID')}`;
+                                    }
+                                    const isExceeded = context.raw > budgetLimit;
+                                    const statusText = isExceeded ? ' (EXCEEDED!)' : ' (Aman)';
+                                    return ` Realisasi: Rp ${context.raw.toLocaleString('id-ID')}${statusText}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Plus Jakarta Sans', size: 11 }, color: '#7A7277' }
+                        },
+                        y: {
+                            grid: { color: '#EFE8E6' },
+                            beginAtZero: true,
+                            ticks: {
+                                font: { family: 'Plus Jakarta Sans', size: 11 },
+                                color: '#7A7277',
+                                callback: function(value) {
+                                    return 'Rp ' + (value / 1000000) + ' Jt';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render & Update Pie Chart Rumah
+        function updateRumahChart() {
+            const filter = document.getElementById('filterRumah').value;
+            const currentData = dataRumah[filter];
+            const ctx = document.getElementById('chartRumah').getContext('2d');
+
+            if (chartRumahInstance) {
+                chartRumahInstance.destroy();
+            }
+
+            chartRumahInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: currentData.labels,
+                    datasets: [{
+                        data: currentData.datasets,
+                        backgroundColor: currentData.colors,
+                        borderWidth: 2,
+                        borderColor: '#FFFFFF'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: 'Plus Jakarta Sans', size: 11 },
+                                color: '#2D272A',
+                                boxWidth: 12,
+                                padding: 12
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render & Update Pie Chart Istri
+        function updateIstriChart() {
+            const filter = document.getElementById('filterIstri').value;
+            const currentData = dataIstri[filter];
+            const ctx = document.getElementById('chartIstri').getContext('2d');
+
+            if (chartIstriInstance) {
+                chartIstriInstance.destroy();
+            }
+
+            chartIstriInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: currentData.labels,
+                    datasets: [{
+                        data: currentData.datasets,
+                        backgroundColor: currentData.colors,
+                        borderWidth: 2,
+                        borderColor: '#FFFFFF'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: 'Plus Jakarta Sans', size: 11 },
+                                color: '#2D272A',
+                                boxWidth: 12,
+                                padding: 12
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initial Load
+        window.onload = function() {
+            updateBarChart();
+            updateRumahChart();
+            updateIstriChart();
+        };
+    </script>
 </body>
 </html>
