@@ -6,12 +6,13 @@ import {
 
 // 1. GANTI bagian ini dengan Firebase Config dari Firebase Console kamu
 const firebaseConfig = {
-  apiKey: "PASTE_API_KEY_KAMU_DI_SINI",
-  authDomain: "PROJECT_ID_KAMU.firebaseapp.com",
-  projectId: "PROJECT_ID_KAMU",
-  storageBucket: "PROJECT_ID_KAMU.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "PASTE_APP_ID_KAMU_DI_SINI"
+  apiKey: "AIzaSyC1-XjC0Hy8pqX0PLCoA3szC6N8GyLmHbU",
+  authDomain: "rumah-hitam-treasury.firebaseapp.com",
+  projectId: "rumah-hitam-treasury",
+  storageBucket: "rumah-hitam-treasury.firebasestorage.app",
+  messagingSenderId: "1067575017215",
+  appId: "1:1067575017215:web:4288d92626f8d29f3996ca",
+  measurementId: "G-DLLQMM05DE"
 };
 
 // Inisialisasi Firebase & Firestore
